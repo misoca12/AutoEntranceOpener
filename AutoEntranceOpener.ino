@@ -191,32 +191,6 @@ void showSignal() {
   }
 }
 
-void sample(int nsamples) {
-    for (int i = 0; i < nsamples; i++) {
-        unsigned long t = micros();
-        vReal[i] = (double)analogRead(PIN_DATA) / 4095.0 * 3.6 + 0.1132; // ESP32のADCの特性を補正
-        vImag[i] = 0;
-        while ((micros() - t) < sampling_period_us) ;
-    }
-}
-
-void DCRemoval(double *vData, uint16_t samples) {
-    double mean = 0;
-    for (uint16_t i = 1; i < samples; i++) {
-        mean += vData[i];
-    }
-    mean /= samples;
-    for (uint16_t i = 1; i < samples; i++) {
-        vData[i] -= mean;
-    }
-}
-
-int X0 = 10;
-int Y0 = 10;
-int _height = 135 - Y0;
-int _width = 240;
-float dmax = 5.0;
-
 void fft(){
     for (int i = 0; i < FFTsamples; i++) {
       unsigned long t = micros();
@@ -272,7 +246,7 @@ void callApiIfNeeded() {
         // 閾値を超えたらチャイムとして判定
         Serial.println("detect!");
         
-        // 開錠
+        // 解錠
         requestSwitchBotApi();
 
         vTaskDelay(2000 / portTICK_RATE_MS);
